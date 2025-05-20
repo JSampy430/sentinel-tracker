@@ -3,7 +3,12 @@ console.log("✅ app.js loaded!");
 
 fetch("http://localhost:5000/log-scripts", {
   method: "POST",
-  ...
+      .then(res => {
+    if (!res.ok) throw new Error("Fetch failed");
+    return res.json();
+  })
+  .then(data => console.log("✅ Logged:", data))
+  .catch(err => console.warn("❌ Script logging failed:", err));
 });
 
 window.addEventListener('load', () => {
