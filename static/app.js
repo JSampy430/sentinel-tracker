@@ -1,6 +1,11 @@
 // ✅ app.js — Sentinel: Script Logger + Prompt Shield + Upload Shield + Exposure Logger + Smart Logging
 console.log("✅ app.js loaded!");
 
+fetch("http://localhost:5000/log-scripts", {
+  method: "POST",
+  ...
+});
+
 window.addEventListener('load', () => {
   console.log("📦 Script logger running...");
 
