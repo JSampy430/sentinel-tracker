@@ -1,20 +1,9 @@
-// ✅ app.js — Sentinel: Script Logger + Prompt Shield + Upload Shield + Exposure Logger + Smart Logging
+// ✅ app.js — Sentinel: Script Logger + Shields + Logger
 console.log("✅ app.js loaded!");
-
-fetch("http://localhost:5000/log-scripts", {
-  method: "POST",
-      .then(res => {
-    if (!res.ok) throw new Error("Fetch failed");
-    return res.json();
-  })
-  .then(data => console.log("✅ Logged:", data))
-  .catch(err => console.warn("❌ Script logging failed:", err));
-});
 
 window.addEventListener('load', () => {
   console.log("📦 Script logger running...");
 
-  // ========== SCRIPT LOGGER ==========
   const scripts = Array.from(document.scripts)
     .map(script => script.src)
     .filter(src => src);
@@ -31,7 +20,6 @@ window.addEventListener('load', () => {
     "chat.openai.com"
   ];
 
-  // Load user whitelist (Option C)
   const userWhitelist = JSON.parse(localStorage.getItem("whitelistedScripts") || "[]");
   const loggedScripts = JSON.parse(sessionStorage.getItem("loggedScripts") || "[]");
 
@@ -80,11 +68,11 @@ window.addEventListener('load', () => {
 
   sessionStorage.setItem("loggedScripts", JSON.stringify(loggedScripts));
 
-  // Log to backend
+  // ✅ Send flagged scripts to local server only
   if (flaggedScripts.length > 0) {
-    fetch('/log-scripts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    fetch("http://localhost:5000/log-scripts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         timestamp: new Date().toISOString(),
         url: window.location.href,
@@ -93,7 +81,10 @@ window.addEventListener('load', () => {
         source: "ScriptLogger"
       })
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("Fetch failed");
+        return res.json();
+      })
       .then(data => console.log("✅ Logged to backend:", data))
       .catch(err => console.warn("❌ Script logging failed:", err));
   }
@@ -125,7 +116,7 @@ window.addEventListener('load', () => {
   });
 
   // ========== PROMPT SHIELD ==========
-  const isOnAIDomain = true; // force for local testing
+  const isOnAIDomain = true;
 
   if (isOnAIDomain) {
     const showPromptWarning = () => {
